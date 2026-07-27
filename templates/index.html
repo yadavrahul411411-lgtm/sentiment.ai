@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mood-Based Learning</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+  </head>
+  <body data-mood="{{ result.mood_key if result else 'idle' }}">
+    <div class="stage">
+      <div class="field" id="field"></div>
+
+      <div class="scene" id="scene">
+        <div class="orb-wrap" id="orbWrap">
+          <div class="orb" id="orb">
+            <div class="orb-layer l1"></div>
+            <div class="orb-layer l2"></div>
+            <div class="orb-layer l3"></div>
+            <div class="orb-core"></div>
+          </div>
+          <div class="orb-ring"></div>
+          <div class="orb-shadow"></div>
+        </div>
+
+        <main class="panel" id="panel">
+          <header class="panel-head">
+            <span class="eyebrow">mood-aware study assistant</span>
+            <h1>How's your head, right now?</h1>
+            <p class="lede">
+              Describe how you're feeling — the orb reads it, and your study
+              plan adjusts to match.
+            </p>
+          </header>
+
+          <form method="POST" class="mood-form">
+            <textarea
+              name="mood"
+              rows="3"
+              placeholder="e.g. I'm a little tired and stressed about tomorrow's exam..."
+              required
+            >
+{{ result.input_text if result else '' }}</textarea
+            >
+            <button type="submit" class="analyze-btn">
+              <span>Read my mood</span>
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path
+                  d="M2 8h11M9 4l4 4-4 4"
+                  stroke="currentColor"
+                  stroke-width="1.6"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </button>
+          </form>
+
+          {% if result %}
+          <section class="result" id="result">
+            <div class="result-top">
+              <h2>{{ result.label }}</h2>
+              <div class="scores">
+                <span>polarity <b>{{ result.polarity }}</b></span>
+                <span>subjectivity <b>{{ result.subjectivity }}</b></span>
+              </div>
+            </div>
+
+            <div class="result-grid">
+              <div class="result-col">
+                <h3><span class="dot"></span>Tips</h3>
+                <ul>
+                  {% for tip in result.tips %}
+                  <li>{{ tip }}</li>
+                  {% endfor %}
+                </ul>
+              </div>
+              <div class="result-col">
+                <h3><span class="dot"></span>Do next</h3>
+                <ul>
+                  {% for res in result.resources %}
+                  <li>{{ res }}</li>
+                  {% endfor %}
+                </ul>
+              </div>
+            </div>
+          </section>
+          {% endif %}
+        </main>
+      </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+  </body>
+</html>
